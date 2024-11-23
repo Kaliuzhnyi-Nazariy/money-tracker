@@ -11,7 +11,9 @@ const items = [
 </script>
 
 <template>
-  <div className="stats stats-vertical lg:stats-horizontal shadow">
+  <div
+    className="stats stats-vertical lg:stats-horizontal shadow grid grid-cols-2 w-[256px] h-full mt-3 md:flex "
+  >
     <StatItem
       v-for="item in items"
       :key="item.title"
