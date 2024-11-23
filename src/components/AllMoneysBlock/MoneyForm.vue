@@ -1,7 +1,12 @@
 <script setup lang="ts">
-import { reactive, toRaw } from 'vue'
+import { useCounterStore } from '@/stores/money'
+import {
+  reactive,
+  // toRaw
+} from 'vue'
 
-const emit = defineEmits(['submit'])
+// const emit = defineEmits(['submit'])
+const storeMoney = useCounterStore()
 
 const moneyData = reactive({
   amountOfMoney: '',
@@ -13,7 +18,8 @@ const moneyData = reactive({
     @submit="
       (e) => {
         e.preventDefault()
-        emit('submit', toRaw(moneyData))
+        storeMoney.firstDepositMoney(Number(moneyData.amountOfMoney))
+        // emit('submit', toRaw(moneyData))
         // console.log(toRaw(moneyData))
       }
     "
