@@ -1,63 +1,103 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { useCounterStore } from '@/stores/money'
+// import {
+//   ref,
+//   // watch
+// } from 'vue'
 
-const Props = defineProps({
-  amountOfMoney: {
-    default: '',
-    type: String,
-  },
-  withdrawMoney: {
-    default: '',
-    type: String,
-  },
-})
+// const Props = defineProps({
+// amountOfMoney: {
+//   default: '',
+//   type: String,
+// },
+// withdrawMoney: {
+//   default: '',
+//   type: String,
+// },
+// depositMoney: {
+//   default: '',
+//   type: String,
+// },
+// })
+// const Props = defineProps<{
+//   amountOfMoney: string
 
-const moneyProgress = ref(0)
-const onePercentOfMoney = ref(0)
-const progress = ref(0)
-const moneyGo = ref(0)
+//   withdrawMoney: string
 
-const moneyGoFunc = (numberOfMoney: number): void => {
-  moneyGo.value = numberOfMoney
-  moneyProgress.value -= numberOfMoney
-  progress.value -= numberOfMoney / onePercentOfMoney.value
-}
+//   depositMoney: string
+// }>()
 
-const setProgress = () => {
-  progress.value = 100
-  moneyProgress.value = Number(Props.amountOfMoney)
-}
+// watchEffect(() => {
+//   console.log('Props: ', Props.amountOfMoney)
+// })
 
-watch(
-  () => Props.amountOfMoney,
-  () => {
-    setProgress()
-    onePercentOfMoney.value = moneyProgress.value / 100
-  },
-)
+const storeMoney = useCounterStore()
+// const moneyProgress = ref(0)
+// const onePercentOfMoney = ref(0)
+// const progress = ref(0)
+// const moneyGo = ref(0)
 
-watch(
-  () => Props.withdrawMoney,
-  (newValue: string, oldValue: string) => {
-    console.log('newValue: ', newValue)
-    console.log('oldValue: ', oldValue)
-    if (newValue !== oldValue || moneyGo.value !== Number(newValue)) {
-      moneyGoFunc(Number(newValue))
-      moneyGo.value = 0
-    }
-  },
-)
+// const moneyGoFunc = (numberOfMoney: number): void => {
+//   moneyGo.value = numberOfMoney
+//   moneyProgress.value -= numberOfMoney
+//   progress.value -= numberOfMoney / onePercentOfMoney.value
+// }
+
+// const setProgress = () => {
+//   progress.value = 100
+//   moneyProgress.value = Number(Props.amountOfMoney)
+// }
+
+// const moneyDeposit = () => {
+//   moneyProgress.value += Number(Props.depositMoney)
+//   const percents = (Number(Props.depositMoney) * 100) / moneyProgress.value
+//   progress.value += percents
+// }
+
+// watch(
+//   () => Props.amountOfMoney,
+//   () => {
+//     console.log('amount of money as props: ', Props.amountOfMoney)
+//     setProgress()
+//     onePercentOfMoney.value = moneyProgress.value / 100
+//   },
+// )
+
+// watch(
+//   () => Props.withdrawMoney,
+//   (newValue: string, oldValue: string) => {
+//     console.log('newValue: ', newValue)
+//     console.log('oldValue: ', oldValue)
+//     if (newValue !== oldValue || moneyGo.value !== Number(newValue)) {
+//       moneyGoFunc(Number(newValue))
+//       moneyGo.value = 0
+//     }
+
+//     if (progress.value < 0 || moneyProgress.value === 0) {
+//       progress.value = 0
+//     }
+//   },
+// )
+
+// watch(
+//   () => Props.depositMoney,
+//   () => {
+//     moneyDeposit()
+//     if (progress.value > 100) {
+//       progress.value = 100
+//     }
+//   },
+// )
 </script>
 
 <template>
   <h2>Your money flow</h2>
   <div
     class="radial-progress w-56 h-56"
-    :style="`--value:${progress}; --size:14rem; --thickness:0.5rem`"
+    :style="`--value:${storeMoney.percent}; --size:14rem; --thickness:0.5rem`"
     role="progressbar"
-    :max="progress"
+    :max="storeMoney.percent"
   >
-    {{ moneyProgress }}
+    {{ storeMoney.allAmount }}
   </div>
-  <button @click="() => moneyGoFunc(100)">moneyGo</button>
 </template>
