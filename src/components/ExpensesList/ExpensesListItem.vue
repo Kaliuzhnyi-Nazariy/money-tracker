@@ -5,7 +5,7 @@ const Props = defineProps({
     default: '',
   },
   money: {
-    type: Number,
+    type: Number || String || undefined,
     default: 0,
   },
   date: {
