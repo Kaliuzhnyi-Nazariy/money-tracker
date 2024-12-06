@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { useCounterStore } from '@/stores/money'
+import { useDepositStore } from '@/stores/depositMoney'
 import {
   reactive,
   // toRaw
 } from 'vue'
 
 // const emit = defineEmits(['submit'])
-const storeMoney = useCounterStore()
+const storeMoney = useDepositStore()
 
 const moneyData = reactive({
   amountOfMoney: '',
