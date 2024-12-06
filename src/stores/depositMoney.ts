@@ -14,7 +14,7 @@ export interface IEarningsList {
 }
 
 export const useDepositStore = defineStore(
-  'money',
+  'earnigs',
   () => {
     const allAmount = ref(0)
     const percent = ref(0)
@@ -63,7 +63,6 @@ export const useDepositStore = defineStore(
       price?: number | string
       type: string
     }) {
-      console.log(user.userToken)
       clearError()
       turnLoadingOn()
 
