@@ -2,14 +2,21 @@
 import AllMoneyBlock from '@/components/AllMoneysBlock/AllMoneyBlock.vue'
 import ButtonsList from '@/components/Buttons/ButtonsList.vue'
 import ExpensesBlock from '@/components/ExpensesBlock/ExpensesBlock.vue'
-import ListMoney from '@/components/ListMoney.vue'
+import ListMoney from '@/components/ListMoney/ListMoney.vue'
+import router from '@/router'
 import { useUserStore } from '@/stores/user'
 
 const userStore = useUserStore()
+
+if (!userStore.refreshToken) {
+  router.replace('/authorization')
+}
+
+console.log(userStore.refreshToken)
 </script>
 
 <template>
-  <button
+  <!-- <button
     @click="
       () => {
         userStore.register({
@@ -42,7 +49,7 @@ const userStore = useUserStore()
     "
   >
     Click for logout
-  </button>
+  </button> -->
 
   <AllMoneyBlock />
   <ExpensesBlock />
