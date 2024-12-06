@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useCounterStore } from '@/stores/money'
+import { useDepositStore } from '@/stores/depositMoney'
 // import {
 //   ref,
 //   // watch
@@ -31,7 +31,7 @@ import { useCounterStore } from '@/stores/money'
 //   console.log('Props: ', Props.amountOfMoney)
 // })
 
-const storeMoney = useCounterStore()
+const storeMoney = useDepositStore()
 // const moneyProgress = ref(0)
 // const onePercentOfMoney = ref(0)
 // const progress = ref(0)
@@ -91,13 +91,15 @@ const storeMoney = useCounterStore()
 </script>
 
 <template>
-  <h2>Your money flow</h2>
-  <div
-    class="radial-progress w-56 h-56"
-    :style="`--value:${storeMoney.percent}; --size:14rem; --thickness:0.5rem`"
-    role="progressbar"
-    :max="storeMoney.percent"
-  >
-    {{ storeMoney.allAmount }}
+  <div class="w-full flex flex-col items-center mb-4">
+    <h2 class="w-full text-center text-lg font-bold mb-4">Your money flow</h2>
+    <div
+      class="radial-progress w-56 h-56"
+      :style="`--value:${storeMoney.percent}; --size:14rem; --thickness:0.5rem`"
+      role="progressbar"
+      :max="storeMoney.percent"
+    >
+      {{ storeMoney.allAmount }}
+    </div>
   </div>
 </template>
