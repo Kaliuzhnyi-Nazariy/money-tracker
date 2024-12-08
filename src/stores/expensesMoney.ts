@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useUserStore } from './user'
 
 const base_API_URL = 'https://tracker-money-back.onrender.com/api/money'
@@ -8,10 +8,17 @@ const user = useUserStore()
 export const useExpensesMoney = defineStore(
   'expenses',
   () => {
-    const allExpenses = ref(0)
+    // const allExpenses = ref(0)
     const expensesList = ref([])
     const expensesIsLoading = ref(false)
     const expensesError = ref<null | string>(null)
+
+    const allExpenses = computed(() => {
+      return expensesList.value.reduce((acc, curr) => {
+        console.log(curr)
+        return (acc += Number(curr.price))
+      }, 0)
+    })
 
     const turnLoadingOn = () => {
       expensesIsLoading.value = true
@@ -39,6 +46,13 @@ export const useExpensesMoney = defineStore(
         })
 
         const resData = await res.json()
+
+        console.log(resData)
+
+        // allExpenses.value = resData.reducer((acc, curr) => {
+        //   console.log(curr)
+        //   return (acc += curr.price)
+        // }, 0)
 
         if (!res.ok) {
           expensesError.value = resData.message
@@ -69,10 +83,16 @@ export const useExpensesMoney = defineStore(
       type: string
       category: string
     }) {
+      clearError()
+      turnLoadingOn()
+
       try {
         const res = await fetch(`${base_API_URL}/newExpenses`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', Authorization: user.userToken },
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${user.userToken}`,
+          },
           body: JSON.stringify({
             title,
             date,
@@ -156,7 +176,13 @@ export const useExpensesMoney = defineStore(
 
     async function deleteExpenses({ expensesId }: { expensesId: string }) {
       try {
-        const res = await fetch(`${base_API_URL}/expenses/remove/${expensesId}`)
+        const res = await fetch(`${base_API_URL}/expenses/remove/${expensesId}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${user.userToken}`,
+          },
+        })
         const resData = await res.json()
 
         if (!res.ok) {
