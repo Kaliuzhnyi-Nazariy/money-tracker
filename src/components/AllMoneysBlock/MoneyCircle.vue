@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { useDepositStore } from '@/stores/depositMoney'
+// import { useDepositStore } from '@/stores/depositMoney'
+import { useMoneyStore } from '@/stores/moneyValue'
+import { useProcentStore } from '@/stores/procent'
 // import {
 //   ref,
 //   // watch
@@ -31,7 +33,8 @@ import { useDepositStore } from '@/stores/depositMoney'
 //   console.log('Props: ', Props.amountOfMoney)
 // })
 
-const storeMoney = useDepositStore()
+const percentStore = useProcentStore()
+const moneyStore = useMoneyStore()
 // const moneyProgress = ref(0)
 // const onePercentOfMoney = ref(0)
 // const progress = ref(0)
@@ -95,11 +98,11 @@ const storeMoney = useDepositStore()
     <h2 class="w-full text-center text-lg font-bold mb-4">Your money flow</h2>
     <div
       class="radial-progress w-56 h-56"
-      :style="`--value:${storeMoney.percent}; --size:14rem; --thickness:0.5rem`"
+      :style="`--value:${percentStore.percent}; --size:14rem; --thickness:0.5rem`"
       role="progressbar"
-      :max="storeMoney.percent"
+      :max="percentStore.percent"
     >
-      {{ storeMoney.allAmount }}
+      {{ moneyStore.moneyValue }}
     </div>
   </div>
 </template>
