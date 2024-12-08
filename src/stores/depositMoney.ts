@@ -1,9 +1,11 @@
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useUserStore } from './user'
+// import { useExpensesMoney } from './expensesMoney'
 
 const base_API_URL = 'https://tracker-money-back.onrender.com/api/money'
 const user = useUserStore()
+// const expenses = useExpensesMoney()
 
 export interface IEarningsList {
   title: string
@@ -16,11 +18,15 @@ export interface IEarningsList {
 export const useDepositStore = defineStore(
   'earnigs',
   () => {
-    const allAmount = ref(0)
-    const percent = ref(0)
     const earningsList = ref<IEarningsList[]>([])
     const depositIsLoading = ref(false)
     const depositError = ref<null | string>(null)
+
+    const allAmount = computed(() => {
+      return earningsList.value.reduce((acc, curr) => {
+        return (acc += Number(curr.price))
+      }, 0)
+    })
 
     const turnLoadingOn = () => {
       depositIsLoading.value = true
@@ -34,10 +40,10 @@ export const useDepositStore = defineStore(
       depositError.value = null
     }
 
-    function firstDepositMoney(depositAmount: number) {
-      allAmount.value += depositAmount
-      percent.value = 100
-    }
+    // function firstDepositMoney(depositAmount: number) {
+    //   allAmount.value += Number(depositAmount)
+    //   // percent.value = 100
+    // }
 
     // function depositMoney(depositAmount: number) {
     //   if (!allAmount.value) {
@@ -99,16 +105,21 @@ export const useDepositStore = defineStore(
         // console.log('Response: ', resData)
         //add case if I have expenses
         earningsList.value.push(resData)
-        if (!allAmount.value) {
-          allAmount.value += resData.price
-          percent.value = 100
-        } else {
-          percent.value += (resData.price * 100) / allAmount.value
-          allAmount.value += resData.price
-        }
-        if (percent.value > 100) {
-          percent.value = 100
-        }
+        console.log('resData: ', resData)
+
+        // if (!allAmount.value) {
+        //   allAmount.value += resData.price
+        //   if (expenses.allExpenses) {
+        //     // percent.value += ((resData.price - expenses.allExpenses) * 100) / allAmount.value
+        //   }
+        //   // percent.value = 100
+        // } else {
+        //   // percent.value += ((resData.price - expenses.allExpenses) * 100) / allAmount.value
+        //   allAmount.value += resData.price
+        // }
+        // if (percent.value > 100) {
+        //   percent.value = 100
+        // }
       } catch (error) {
         // Handle network or other unexpected errors
         console.error('An error occurred:', error)
@@ -135,7 +146,7 @@ export const useDepositStore = defineStore(
         }
 
         turnLoadingOff()
-        console.log(await res.json())
+        earningsList.value = await res.json()
       } catch (error) {
         console.error('An error occurred:', error)
         depositError.value = 'An unexpected error occurred'
@@ -205,7 +216,6 @@ export const useDepositStore = defineStore(
     }
 
     async function deleteEarning({ earningsId }: { earningsId: string }) {
-      console.log(earningsId)
       try {
         const res = await fetch(`${base_API_URL}/earnings/remove/${earningsId}`, {
           method: 'DELETE',
@@ -229,12 +239,11 @@ export const useDepositStore = defineStore(
           turnLoadingOff()
           return
         }
-        const delItem = await res.json()
+        // const delItem = await res.json()
 
-        allAmount.value -= delItem.price
+        // allAmount.value -= delItem.price
 
-        //change 500 on all expensses amount
-        percent.value = 100 - (100 * 500) / allAmount.value
+        // percent.value = 100 - (100 * Number(expenses.addExpenses)) / allAmount.value
 
         earningsList.value.splice(delIndex, 1)
         turnLoadingOff()
@@ -247,12 +256,12 @@ export const useDepositStore = defineStore(
 
     return {
       allAmount,
-      percent,
+      // percent,
       earningsList,
       depositIsLoading,
       depositError,
       // depositMoney,
-      firstDepositMoney,
+      // firstDepositMoney,
       addDepositMoney,
       receiveDeposit,
       updateEarnings,
