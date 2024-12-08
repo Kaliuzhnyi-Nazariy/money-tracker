@@ -31,7 +31,6 @@ const { isModalOpen, openModal, closeModal } = useModal()
     @click="
       () => {
         openModal()
-        console.log(Props.id)
       }
     "
   >

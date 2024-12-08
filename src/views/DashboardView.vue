@@ -11,8 +11,6 @@ const userStore = useUserStore()
 if (!userStore.refreshToken) {
   router.replace('/authorization')
 }
-
-console.log(userStore.refreshToken)
 </script>
 
 <template>
