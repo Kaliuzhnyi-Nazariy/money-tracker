@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue'
+import { computed, onMounted, watch } from 'vue'
 
 import { useDepositStore } from '@/stores/depositMoney'
 import HeaderOfEarningList from './HeaderOfEarningList.vue'
 import ExpensesListItem from '../ExpensesList/ExpensesListItem.vue'
 import EarningsListItem from '../EarningsList/EarningsListItem.vue'
 import HeaderOfExpenssesList from './HeaderOfExpenssesList.vue'
+import { useExpensesMoney } from '@/stores/expensesMoney'
 
 const Props = defineProps({
   typeOfList: {
@@ -15,10 +16,18 @@ const Props = defineProps({
 })
 
 const depositStore = useDepositStore()
+const expensesStore = useExpensesMoney()
 
 const typeOfListIsExpenses = computed(() => {
   return Props.typeOfList === 'expenses' ? true : false
 })
+
+watch(
+  () => expensesStore.expensesList,
+  () => {
+    expensesStore.receiveExpenses()
+  },
+)
 
 watch(
   () => depositStore.earningsList,
@@ -26,46 +35,46 @@ watch(
     depositStore.receiveDeposit()
   },
 )
+
+console.log()
 </script>
 
 <template>
+  <button @click="expensesStore.receiveExpenses()">expensesStore.receiveExpenses()</button>
+  <p>{{ expensesStore.allExpenses }}</p>
   <div class="border border-white rounded-2xl py-2 mt-3 w-[256px]">
     <HeaderOfExpenssesList v-if="typeOfListIsExpenses" />
     <HeaderOfEarningList v-else />
 
-    <ul class="w-full overflow-scroll h-[280px]" v-if="typeOfListIsExpenses">
-      <ExpensesListItem
-        v-for="expensesItem in depositStore.earningsList"
-        :key="expensesItem.id"
-        :name="expensesItem.title"
-        :money="expensesItem.price"
-        :date="expensesItem.Date"
-        :category="expensesItem.category"
-      />
-    </ul>
-    <!-- <ul v-else>
-      <EarningsListItem
-        v-for="expensesItem in expensesList"
-        :key="expensesItem.id"
-        :name="expensesItem.name"
-        :money="expensesItem.price"
-        :date="expensesItem.Date"
-        :category="expensesItem.category"
-      />
-    </ul> -->
     <ul
       class="w-full h-[280px]"
-      :class="[depositStore.earningsList.length > 5 ? 'overflow-y-scroll' : 'overflow-hidden']"
-      v-else
+      :class="[expensesStore.expensesList.length > 4 ? 'overflow-y-scroll' : 'overflow-hidden']"
+      v-if="typeOfListIsExpenses"
     >
-      <EarningsListItem
-        v-for="expensesItem in depositStore.earningsList"
+      <ExpensesListItem
+        v-for="expensesItem in expensesStore.expensesList"
         :key="expensesItem._id"
         :id="expensesItem._id"
         :name="expensesItem.title"
         :money="expensesItem.price"
         :date="expensesItem.Date"
         :category="expensesItem.category"
+      />
+    </ul>
+
+    <ul
+      class="w-full h-[280px]"
+      :class="[depositStore.earningsList.length > 5 ? 'overflow-y-scroll' : 'overflow-hidden']"
+      v-else
+    >
+      <EarningsListItem
+        v-for="earninngsItem in depositStore.earningsList"
+        :key="earninngsItem._id"
+        :id="earninngsItem._id"
+        :name="earninngsItem.title"
+        :money="earninngsItem.price"
+        :date="earninngsItem.Date"
+        :category="earninngsItem.category"
       />
     </ul>
   </div>
