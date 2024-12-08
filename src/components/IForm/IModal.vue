@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, Teleport } from 'vue'
 import DepositMoneyFrom from '../AllMoneysBlock/DepositMoneyFrom.vue'
+import MoneyGoForm from '../AllMoneysBlock/MoneyGoForm.vue'
 
 const props = defineProps({
   isOpen: {
@@ -9,7 +10,7 @@ const props = defineProps({
   typeOfModal: {
     type: String,
     default: 'dep',
-    enum: ['dep', 'upd', 'depUpd'],
+    enum: ['dep', 'depUpd', 'with', 'withUpd'],
   },
   id: {
     type: String,
@@ -47,9 +48,19 @@ const emit = defineEmits(['close'])
       @click.self="emit('close')"
     >
       <DepositMoneyFrom v-if="props.typeOfModal === 'dep'" @closeAfterSubmit="emit('close')" />
-      <!-- <MoneyGoForm v-else-if="props.typeOfModal === 'with'" /> -->
+      <MoneyGoForm v-else-if="props.typeOfModal === 'with'" @close="emit('close')" />
       <DepositMoneyFrom
         v-if="props.typeOfModal === 'depUpd'"
+        @closeAfterSubmit="emit('close')"
+        :id
+        :name
+        :money
+        :date
+        :category
+        type="upd"
+      />
+      <MoneyGoForm
+        v-if="props.typeOfModal === 'withUpd'"
         @closeAfterSubmit="emit('close')"
         :id
         :name
