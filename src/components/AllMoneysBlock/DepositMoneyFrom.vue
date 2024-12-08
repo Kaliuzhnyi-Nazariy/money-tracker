@@ -3,6 +3,7 @@ import { useDepositStore } from '@/stores/depositMoney'
 import { computed, reactive } from 'vue'
 import InputComp from '../Input/InputComp.vue'
 import DatePicker from 'primevue/datepicker'
+import { dateFormatted } from '../compossables/dateFormatter'
 const storeMoney = useDepositStore()
 
 // const emit = defineEmits(['deposit'])
@@ -63,16 +64,16 @@ if (props.name) {
 
 const emit = defineEmits(['closeAfterSubmit'])
 
-const dateFormatted = () => {
-  const date = new Date(depositMoneyValue.date || new Date())
+// const dateFormatted = () => {
+//   const date = new Date(depositMoneyValue.date || new Date())
 
-  const day = String(date.getDate()).padStart(2, '0')
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const year = date.getFullYear()
+//   const day = String(date.getDate()).padStart(2, '0')
+//   const month = String(date.getMonth() + 1).padStart(2, '0')
+//   const year = date.getFullYear()
 
-  depositMoneyValue.date = `${month}-${day}-${year}`
-  return
-}
+//   depositMoneyValue.date = `${month}-${day}-${year}`
+//   return
+// }
 
 export interface IData {
   title: string
@@ -107,7 +108,7 @@ const operation = computed(() => {
   <form
     @submit.prevent="
       () => {
-        dateFormatted()
+        depositMoneyValue.date = dateFormatted({ dateBefore: depositMoneyValue.date })
         operation
         emit('closeAfterSubmit')
         cleanDeposit()
@@ -139,7 +140,6 @@ const operation = computed(() => {
       <button
         type="submit"
         class="w-full mx-auto md:border border-opacity-30 hover:border-opacity-70 border-red-700"
-        @click="console.log(id)"
       >
         Update
       </button>
