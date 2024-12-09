@@ -20,6 +20,46 @@ export const useExpensesMoney = defineStore(
       }, 0)
     })
 
+    const healthExpenses = computed(() => {
+      let finVal = 0
+      for (let i = 0; i < expensesList.value.length; i++) {
+        if (expensesList.value[i].category === 'health') {
+          finVal += Number(expensesList.value[i].price)
+        }
+      }
+      return finVal
+    })
+
+    const othersExpenses = computed(() => {
+      let finVal = 0
+      for (let i = 0; i < expensesList.value.length; i++) {
+        if (expensesList.value[i].category === 'others') {
+          finVal += Number(expensesList.value[i].price)
+        }
+      }
+      return finVal
+    })
+
+    const foodExpenses = computed(() => {
+      let finVal = 0
+      for (let i = 0; i < expensesList.value.length; i++) {
+        if (expensesList.value[i].category === 'food') {
+          finVal += Number(expensesList.value[i].price)
+        }
+      }
+      return finVal
+    })
+
+    const needsExpenses = computed(() => {
+      let finVal = 0
+      for (let i = 0; i < expensesList.value.length; i++) {
+        if (expensesList.value[i].category === 'needs') {
+          finVal += Number(expensesList.value[i].price)
+        }
+      }
+      return finVal
+    })
+
     const turnLoadingOn = () => {
       expensesIsLoading.value = true
     }
@@ -137,9 +177,12 @@ export const useExpensesMoney = defineStore(
       category: string
     }) {
       try {
-        const res = await fetch(`${base_API_URL}/expenses/:${expensesId}`, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json', Authorization: user.userToken },
+        const res = await fetch(`${base_API_URL}/expenses/${expensesId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${user.userToken}`,
+          },
           body: JSON.stringify({
             title,
             date,
@@ -217,6 +260,10 @@ export const useExpensesMoney = defineStore(
       addExpenses,
       updateExpenses,
       deleteExpenses,
+      healthExpenses,
+      othersExpenses,
+      foodExpenses,
+      needsExpenses,
     }
   },
   { persist: true },
