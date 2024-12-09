@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, watch } from 'vue'
+import { computed, watch } from 'vue'
 
 import { useDepositStore } from '@/stores/depositMoney'
 import HeaderOfEarningList from './HeaderOfEarningList.vue'
@@ -40,8 +40,6 @@ console.log()
 </script>
 
 <template>
-  <button @click="expensesStore.receiveExpenses()">expensesStore.receiveExpenses()</button>
-  <p>{{ expensesStore.allExpenses }}</p>
   <div class="border border-white rounded-2xl py-2 mt-3 w-[256px]">
     <HeaderOfExpenssesList v-if="typeOfListIsExpenses" />
     <HeaderOfEarningList v-else />
