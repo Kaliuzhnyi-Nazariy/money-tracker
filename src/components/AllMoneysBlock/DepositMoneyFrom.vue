@@ -125,13 +125,7 @@ const operation = computed(() => {
       v-model="depositMoneyValue.amount"
       placeholder="How much you spent? 🤑"
     />
-    <!-- <select class="bg-white w-full" v-model="depositMoneyValue.category">
-      <option value="food">food</option>
-      <option value="clothes">clothes</option>
-      <option value="health">health</option>
-      <option value="others" default>others</option>
-    </select> -->
-    <!-- <DatePicker v-model="date" showIcon fluid iconDisplay="input" dateFormat="MM/dd/yy" /> -->
+
     <small class="text-sm">Pick the date</small>
 
     <DatePicker name="date" fluid v-model="depositMoneyValue.date" class="mb-4" />
