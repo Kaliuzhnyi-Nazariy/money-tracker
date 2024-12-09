@@ -23,7 +23,6 @@ const Props = defineProps({
 })
 
 const { openModal, closeModal, isModalOpen } = useModal()
-console.log(Props.id)
 </script>
 
 <template>
