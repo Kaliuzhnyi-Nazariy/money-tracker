@@ -48,7 +48,7 @@ const emit = defineEmits(['close'])
       @click.self="emit('close')"
     >
       <DepositMoneyFrom v-if="props.typeOfModal === 'dep'" @closeAfterSubmit="emit('close')" />
-      <MoneyGoForm v-else-if="props.typeOfModal === 'with'" @close="emit('close')" />
+      <MoneyGoForm v-else-if="props.typeOfModal === 'with'" @closeAfterSubmit="emit('close')" />
       <DepositMoneyFrom
         v-if="props.typeOfModal === 'depUpd'"
         @closeAfterSubmit="emit('close')"
