@@ -11,12 +11,12 @@ const Props = defineProps({
 })
 
 const compBackByTopic = computed(() => {
-  if (Props.topic === 'food') {
+  if (Props.title === 'food') {
     return 'bg-green-400'
-  } else if (Props.topic === 'Health') {
+  } else if (Props.title === 'health') {
     return 'bg-orange-400'
-  } else if (Props.topic === '') {
-    return 'bg-gray-400'
+  } else if (Props.title === 'needs') {
+    return 'bg-purple-400'
   } else {
     return 'bg-gray-400'
   }
@@ -25,14 +25,14 @@ const compBackByTopic = computed(() => {
 
 <template>
   <div class="stat p-3 h-36" :class="compBackByTopic">
-    <div className="stat-title text-white w-full flex items-center justify-center">
+    <div className="stat-title text-white w-full flex items-center justify-center ">
       {{ Props.title }}
     </div>
     <div className="stat-value text-white w-full flex items-center justify-center">
       {{ Props.amount }}
     </div>
-    <div className="stat-desc text-white w-full flex  items-center justify-center">
+    <!-- <div className="stat-desc text-white w-full flex  items-center justify-center">
       {{ Props.topic }}
-    </div>
+    </div> -->
   </div>
 </template>
