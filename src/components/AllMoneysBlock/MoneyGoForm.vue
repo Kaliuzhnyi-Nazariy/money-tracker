@@ -34,7 +34,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(['closeAfterSubmit'])
 
 export interface IWithdrawData {
   date: Date | Date[] | (Date | null)[] | null | undefined | string
@@ -74,6 +74,7 @@ const operation = computed(() => {
         category: withdrawData.category,
       })
     : storeMoney.updateExpenses({
+        expensesId: props.id,
         title: withdrawData.title,
         date: withdrawData.date,
         price: withdrawData.amountToWithdraw,
@@ -86,10 +87,10 @@ const operation = computed(() => {
 <template>
   <form
     @submit.prevent="
-      () => {
+      async () => {
         withdrawData.date = dateFormatted({ dateBefore: withdrawData.date })
-        operation
-        emit('close')
+        await operation
+        emit('closeAfterSubmit')
         cleanDataValues()
       }
     "
@@ -107,8 +108,8 @@ const operation = computed(() => {
       />
       <select class="bg-white w-full" v-model="withdrawData.category">
         <option value="food">food</option>
-        <option value="clothes">clothes</option>
         <option value="health">health</option>
+        <option value="needs">needs</option>
         <option value="others" default>others</option>
       </select>
       <DatePicker name="date" fluid v-model="withdrawData.date" class="mb-4" />
