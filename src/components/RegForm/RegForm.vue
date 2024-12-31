@@ -1,28 +1,28 @@
 <script setup lang="ts">
-import { reactive, ref, watch } from 'vue'
+import { reactive } from 'vue'
 import InputComp from '../Input/InputComp.vue'
 import { useUserStore } from '@/stores/user'
 import { useMutation } from '../compossables/useMutation'
-
+import ButtonLogReg from '../ButtonLogReg/ButtonLogReg.vue'
+import { messageStore } from '@/stores/messageStore'
 const regData = reactive({
   email: '',
   password: '',
   confirmPassword: '',
 })
 
-const props = defineProps({
-  disabledButton: {
-    type: Boolean,
-    // default: true,
-    // required: true,
-  },
-})
+// const props = defineProps({
+//   disabledButton: {
+//     type: Boolean,
+//     // default: true,
+//     // required: true,
+//   },
+// })
+const store = messageStore()
 
 const emit = defineEmits(['changeAuth'])
 
 const useStore = useUserStore()
-
-const tempError = ref(false)
 
 const { mutation: regUser, isLoading: reggingUser } = useMutation({
   mutationFn: (regData: { email: string; password: string; confirmPassword: string }) => {
@@ -32,20 +32,27 @@ const { mutation: regUser, isLoading: reggingUser } = useMutation({
       confirmPassword: regData.confirmPassword,
     })
   },
-  onSuccess: () => emit('changeAuth'),
+  onSuccess: () => {
+    store.setSuccess('Account created!')
+    emit('changeAuth')
+  },
+  onError: () => {
+    store.setError(useStore.userError)
+  },
 })
 
-watch(
-  () => useStore.userError,
-  () => {
-    if (useStore.userError) {
-      tempError.value = true
-      setTimeout(() => {
-        tempError.value = false
-      }, 5000)
-    }
-  },
-)
+// watch(
+//   () => useStore.userError,
+//   () => {
+// setError(useStore.userError)
+//     // if (useStore.userError) {
+//     //   tempError.value = true
+//     //   setTimeout(() => {
+//     //     tempError.value = false
+//     //   }, 5000)
+//     // }
+//   },
+// )
 </script>
 
 <template>
@@ -59,8 +66,7 @@ watch(
       // })
     "
     :disabled="useStore.userLoading"
-    class="flex flex-col gap-3 px-auto"
-    :class="useStore.userLoading ? 'bg-slate-800 p-5' : ''"
+    class="flex flex-col gap-2 px-auto"
   >
     <InputComp placeholder="Enter your email" v-model="regData.email" />
     <InputComp placeholder="Enter your password" type="password" v-model="regData.password" />
@@ -69,10 +75,19 @@ watch(
       type="password"
       v-model="regData.confirmPassword"
     />
-    <button type="submit" :disabled="props.disabledButton" :is-loading="reggingUser">
+    <ButtonLogReg
+      log-or-reg="reg"
+      :is-loading="reggingUser"
+      @click="
+        () => {
+          store.resErr()
+          store.resSuc()
+        }
+      "
+    />
+    <!-- <button type="submit" :disabled="props.disabledButton" :is-loading="reggingUser">
       Sign up
-    </button>
-    <div class="text-red-500" v-if="tempError">{{ useStore.userError }}</div>
+    </button> -->
   </form>
 </template>
 
