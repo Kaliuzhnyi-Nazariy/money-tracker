@@ -2,9 +2,11 @@
 import { useDepositStore } from '@/stores/depositMoney'
 import { computed, reactive } from 'vue'
 import InputComp from '../Input/InputComp.vue'
-import DatePicker from 'primevue/datepicker'
 import { dateFormatted } from '../compossables/dateFormatter'
+import { useMutation } from '../compossables/useMutation'
+import { messageStore } from '@/stores/messageStore'
 const storeMoney = useDepositStore()
+import DatePickerComp from '@/DatePickerComp.vue'
 
 // const emit = defineEmits(['deposit'])
 
@@ -37,43 +39,30 @@ const props = defineProps({
 
 export interface IDepositValue {
   title: string
-  amount: string | number
+  amount: string
   date: null | string
 }
 
 const depositMoneyValue = reactive({
   title: '',
-  amount: 0,
+  amount: '',
   category: 'others',
   date: null,
 }) as IDepositValue
 
 const cleanDeposit = () => {
   depositMoneyValue.title = ''
-  depositMoneyValue.amount = 0
-  // depositMoneyValue.category = 'others'
+  depositMoneyValue.amount = ''
   depositMoneyValue.date = null
 }
 
 if (props.name) {
   depositMoneyValue.title = props.name
-  depositMoneyValue.amount = props.money
-  // depositMoneyValue.category = props.category
+  depositMoneyValue.amount = String(props.money)
   depositMoneyValue.date = props.date
 }
 
 const emit = defineEmits(['closeAfterSubmit'])
-
-// const dateFormatted = () => {
-//   const date = new Date(depositMoneyValue.date || new Date())
-
-//   const day = String(date.getDate()).padStart(2, '0')
-//   const month = String(date.getMonth() + 1).padStart(2, '0')
-//   const year = date.getFullYear()
-
-//   depositMoneyValue.date = `${month}-${day}-${year}`
-//   return
-// }
 
 export interface IData {
   title: string
@@ -86,21 +75,58 @@ export interface IUpdDate extends IData {
   earningsId: string
 }
 
+const store = messageStore()
+
+const { mutation: deposit } = useMutation({
+  mutationFn: (depositMoneyValue: IDepositValue) => {
+    return storeMoney.addDepositMoney({
+      title: depositMoneyValue.title,
+      price: depositMoneyValue.amount,
+      date: depositMoneyValue.date,
+      type: 'earnings',
+    } as IData)
+  },
+  onSuccess: () => {
+    store.setSuccess('Earning added!')
+  },
+  onError: (err) => {
+    store.setError(err instanceof Error ? err.message : 'An unexpected error occurred')
+  },
+})
+
+const { mutation: depositUpd, errorMess: depUpdErr } = useMutation({
+  mutationFn: (depositMoneyValue: IDepositValue) => {
+    return storeMoney.updateEarnings({
+      earningsId: props.id,
+      title: depositMoneyValue.title,
+      price: depositMoneyValue.amount,
+      date: depositMoneyValue.date,
+      type: 'earnings',
+    } as IUpdDate)
+  },
+  onSuccess: () => {
+    store.setSuccess('Earning updated!')
+  },
+  onError: () => {
+    store.setError(depUpdErr)
+  },
+})
+
 const operation = computed(() => {
-  return props.type === 'dep'
-    ? storeMoney.addDepositMoney({
-        title: depositMoneyValue.title,
-        price: depositMoneyValue.amount,
-        date: depositMoneyValue.date,
-        type: 'earnings',
-      } as IData)
-    : storeMoney.updateEarnings({
-        earningsId: props.id,
-        title: depositMoneyValue.title,
-        price: depositMoneyValue.amount,
-        date: depositMoneyValue.date,
-        type: 'earnings',
-      } as IUpdDate)
+  return props.type === 'dep' ? deposit(depositMoneyValue) : depositUpd(depositMoneyValue)
+})
+
+const { mutation: delDep } = useMutation({
+  mutationFn: () => {
+    store.resMess()
+    return storeMoney.deleteEarning({ earningsId: props.id })
+  },
+  onSuccess: () => {
+    store.setSuccess('Earning deleted!')
+  },
+  onError: () => {
+    store.setError(depUpdErr)
+  },
 })
 </script>
 
@@ -109,6 +135,7 @@ const operation = computed(() => {
     @submit.prevent="
       () => {
         depositMoneyValue.date = dateFormatted({ dateBefore: depositMoneyValue.date })
+        store.resMess()
         operation
         emit('closeAfterSubmit')
         cleanDeposit()
@@ -117,30 +144,45 @@ const operation = computed(() => {
     class="absolute top-[50%] right-[50%] translate-x-[50%] translate-y-[-50%] bg-white p-6 text-black"
   >
     <h3 class="font-bold mb-2 text-center">Deposit money</h3>
-    <small class="text-sm">What you bought? 😏</small>
-    <InputComp type="text" v-model="depositMoneyValue.title" placeholder="How much you spent? 🤑" />
-    <small class="text-sm">How much you spent? 😏</small>
-    <InputComp
-      type="text"
-      v-model="depositMoneyValue.amount"
-      placeholder="How much you spent? 🤑"
-    />
+    <small class="text-sm">What is the sourse? 😏</small>
+    <InputComp type="text" v-model="depositMoneyValue.title" placeholder="Hmmmm?" />
+    <small class="text-sm">How much you earn? 😏</small>
+    <InputComp type="text" v-model="depositMoneyValue.amount" placeholder="amount? 🤑" />
 
     <small class="text-sm">Pick the date</small>
-
-    <DatePicker name="date" fluid v-model="depositMoneyValue.date" class="mb-4" />
-    <button v-if="props.type === 'dep'" type="submit" class="w-full mx-auto">Deposit</button>
+    <div class="flex justify-center mb-2">
+      <DatePickerComp
+        :date="props.date"
+        @date="
+          (formattedData: string) => {
+            depositMoneyValue.date = formattedData
+          }
+        "
+      />
+    </div>
+    <button
+      v-if="props.type === 'dep'"
+      type="submit"
+      class="w-full mx-auto transition-all hover:border-main hover:bg-secondary hover:text-white"
+      @click="
+        () => {
+          store.resMess()
+        }
+      "
+    >
+      Deposit
+    </button>
     <div class="md:grid grid-cols-2 h-9" v-else>
       <button
         type="submit"
-        class="w-full mx-auto md:border border-opacity-30 hover:border-opacity-70 border-red-700"
+        class="min-[1440px]:py-2 w-full mx-auto transition-all hover:border-main hover:bg-secondary hover:text-white"
       >
         Update
       </button>
       <button
         type="button"
-        class="w-full mx-auto md:border border-opacity-30 hover:border-opacity-70 border-red-700"
-        @click="storeMoney.deleteEarning({ earningsId: props.id })"
+        class="min-[1440px]:py-2 w-full mx-auto transition-all hover:border-main hover:bg-secondary hover:text-white"
+        @click="() => delDep()"
       >
         Delete
       </button>

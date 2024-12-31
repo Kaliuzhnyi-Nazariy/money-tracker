@@ -2,8 +2,10 @@
 import { useExpensesMoney } from '@/stores/expensesMoney'
 import { computed, reactive } from 'vue'
 import InputComp from '../Input/InputComp.vue'
-import DatePicker from 'primevue/datepicker'
 import { dateFormatted } from '../compossables/dateFormatter'
+import { useMutation } from '../compossables/useMutation'
+import { messageStore } from '@/stores/messageStore'
+import DatePickerComp from '@/DatePickerComp.vue'
 
 const storeMoney = useExpensesMoney()
 
@@ -38,7 +40,7 @@ const emit = defineEmits(['closeAfterSubmit'])
 
 export interface IWithdrawData {
   date: Date | Date[] | (Date | null)[] | null | undefined | string
-  amountToWithdraw: string | number | undefined
+  amountToWithdraw: string
   category: string
   title: string
 }
@@ -59,47 +61,100 @@ const cleanDataValues = () => {
 
 if (props.name) {
   withdrawData.title = props.name
-  withdrawData.amountToWithdraw = props.money
+  withdrawData.amountToWithdraw = String(props.money)
   withdrawData.category = props.category
   withdrawData.date = props.date
 }
 
+const store = messageStore()
+
+const {
+  mutation: withdraw,
+  // isLoading: depLoadinfg,
+  errorMess: withdrawErr,
+} = useMutation({
+  mutationFn: (withdrawData: IWithdrawData) => {
+    return storeMoney.addExpenses({
+      title: withdrawData.title,
+      date: withdrawData.date,
+      price: withdrawData.amountToWithdraw,
+      type: 'expenses',
+      category: withdrawData.category,
+    })
+  },
+  onSuccess: () => {
+    store.setSuccess('Withdraw added!')
+  },
+  onError: () => {
+    store.setError(withdrawErr)
+  },
+})
+
+const {
+  mutation: updWithdraw,
+  // isLoading: depLoadinfg,
+  errorMess: updWithdrawErr,
+} = useMutation({
+  mutationFn: (withdrawData: IWithdrawData) => {
+    return storeMoney.updateExpenses({
+      expensesId: props.id,
+      title: withdrawData.title,
+      date: withdrawData.date,
+      price: withdrawData.amountToWithdraw,
+      type: 'expenses',
+      category: withdrawData.category,
+    })
+  },
+  onSuccess: () => {
+    store.setSuccess('Withdraw updated!')
+  },
+  onError: () => {
+    store.setError(updWithdrawErr)
+  },
+})
+
 const operation = computed(() => {
-  return props.type === 'with'
-    ? storeMoney.addExpenses({
-        title: withdrawData.title,
-        date: withdrawData.date,
-        price: withdrawData.amountToWithdraw,
-        type: 'expenses',
-        category: withdrawData.category,
-      })
-    : storeMoney.updateExpenses({
-        expensesId: props.id,
-        title: withdrawData.title,
-        date: withdrawData.date,
-        price: withdrawData.amountToWithdraw,
-        type: 'expenses',
-        category: withdrawData.category,
-      })
+  return props.type === 'with' ? withdraw : updWithdraw
+})
+
+const {
+  mutation: delExp,
+  // isLoading: depLoadinfg,
+  errorMess: delExpErr,
+} = useMutation({
+  mutationFn: () => {
+    return storeMoney.deleteExpenses({ expensesId: props.id })
+  },
+  onSuccess: () => {
+    store.setSuccess('Withdraw deleted!')
+  },
+  onError: () => {
+    store.setError(delExpErr)
+  },
 })
 </script>
 
 <template>
   <form
     @submit.prevent="
-      async () => {
-        withdrawData.date = dateFormatted({ dateBefore: withdrawData.date })
-        await operation
+      () => {
+        store.resMess()
+        withdrawData.date = dateFormatted({ dateBefore: String(withdrawData.date) })
+        operation(withdrawData)
         emit('closeAfterSubmit')
         cleanDataValues()
       }
     "
-    class="absolute top-[50%] right-[50%] translate-x-[50%] translate-y-[-50%] bg-white p-6 text-black"
+    class="absolute top-[50%] right-[50%] translate-x-[50%] translate-y-[-50%] bg-white p-6 text-black w-[60%]"
   >
-    <h3 class="font-bold mb-2 text-center">What you bought?😏</h3>
+    <h3 class="font-bold mb-2 text-center">What have you bought?😏</h3>
     <div class="flex flex-col gap-3">
       <small class="text-sm">What your purchase is?</small>
-      <InputComp type="text" v-model="withdrawData.title" placeholder="How much you spent? 😏" />
+      <InputComp
+        type="text"
+        v-model="withdrawData.title"
+        placeholder="What interesting was bought? 😏"
+      />
       <small class="text-sm">How much you spent? 😏</small>
       <InputComp
         type="text"
@@ -112,21 +167,43 @@ const operation = computed(() => {
         <option value="needs">needs</option>
         <option value="others" default>others</option>
       </select>
-      <DatePicker name="date" fluid v-model="withdrawData.date" class="mb-4" />
+      <small>Date of the purchase</small>
+      <!-- <DatePicker
+        name="date"
+        fluid
+        v-model="withdrawData.date"
+        class="mb-4"
+        placeholder="pick date"
+      /> -->
+      <div class="flex justify-center mb-2">
+        <DatePickerComp
+          :date="props.date"
+          @date="
+            (formattedData: string) => {
+              withdrawData.date = formattedData
+            }
+          "
+        />
+      </div>
     </div>
     <div class="flex justify-center" v-if="props.type === 'with'">
       <button type="submit">Withdraw</button>
     </div>
-    <div class="mx-auto flex flex-col" v-else>
-      <button type="submit">Update</button>
+    <div class="mx-auto flex flex-col min-[1440px]:flex-row min-[1440px]:justify-around" v-else>
+      <button
+        type="submit"
+        class="py-2 w-full transition-all hover:border-main hover:bg-secondary hover:text-white"
+      >
+        Update
+      </button>
       <button
         type="button"
         @click="
           () => {
-            console.log(props.id)
-            storeMoney.deleteExpenses({ expensesId: props.id })
+            delExp()
           }
         "
+        class="py-2 w-full transition-all hover:border-main hover:bg-secondary hover:text-white"
       >
         Delete
       </button>
