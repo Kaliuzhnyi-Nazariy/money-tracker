@@ -6,14 +6,16 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import PrimeVue from 'primevue/config'
 
 import App from './App.vue'
-import router from './router'
+import './assets/index.css'
+import { router } from './router'
 
 const app = createApp(App)
 const pinia = createPinia()
 
 pinia.use(piniaPluginPersistedstate)
-app.use(pinia)
-app.use(router)
 app.use(PrimeVue)
+app.use(pinia)
+
+app.use(router)
 
 app.mount('#app')
