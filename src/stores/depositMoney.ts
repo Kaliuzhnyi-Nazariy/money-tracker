@@ -75,7 +75,8 @@ export const useDepositStore = defineStore(
       if (!user.userToken) {
         depositError.value = 'Unauthorized'
         turnLoadingOff()
-        return
+        user.resetToken()
+        throw 'Unauthorized'
       }
 
       try {
@@ -98,37 +99,24 @@ export const useDepositStore = defineStore(
         if (!res.ok) {
           depositError.value = resData.message
           turnLoadingOff()
-          return
+
+          throw new Error(resData.message)
         }
 
         turnLoadingOff()
-        // console.log('Response: ', resData)
-        //add case if I have expenses
         earningsList.value.push(resData)
-        console.log('resData: ', resData)
-
-        // if (!allAmount.value) {
-        //   allAmount.value += resData.price
-        //   if (expenses.allExpenses) {
-        //     // percent.value += ((resData.price - expenses.allExpenses) * 100) / allAmount.value
-        //   }
-        //   // percent.value = 100
-        // } else {
-        //   // percent.value += ((resData.price - expenses.allExpenses) * 100) / allAmount.value
-        //   allAmount.value += resData.price
-        // }
-        // if (percent.value > 100) {
-        //   percent.value = 100
-        // }
       } catch (error) {
         // Handle network or other unexpected errors
         console.error('An error occurred:', error)
         depositError.value = 'An unexpected error occurred'
         turnLoadingOff()
+        throw error // <--- Rethrow the error for the mutation handler
       }
     }
 
     async function receiveDeposit() {
+      clearError()
+      turnLoadingOn()
       try {
         const res = await fetch(`${base_API_URL}/allEarnings`, {
           method: 'GET',
@@ -151,6 +139,7 @@ export const useDepositStore = defineStore(
         console.error('An error occurred:', error)
         depositError.value = 'An unexpected error occurred'
         turnLoadingOff()
+        throw error // <--- Rethrow the error for the mutation handler
       }
     }
 
@@ -167,6 +156,8 @@ export const useDepositStore = defineStore(
       price?: number | string
       type: string
     }) {
+      clearError()
+      turnLoadingOn()
       try {
         const res = await fetch(`${base_API_URL}/earnings/${earningsId}`, {
           method: 'PUT',
@@ -185,37 +176,36 @@ export const useDepositStore = defineStore(
         const resData = await res.json() // Parse the response body once
 
         if (!res.ok) {
-          // Handle error if response status is not ok
           depositError.value = resData.message
           turnLoadingOff()
-          return
+          throw resData.message
         }
 
         const updIndex = earningsList.value.findIndex((earning) => earning._id === earningsId)
 
-        console.log('updIndex: ', updIndex)
-
         if (updIndex === -1) {
-          // Handle case where the earning is not found in the list
           depositError.value = 'Earning not found in the list'
           turnLoadingOff()
-          return
+          throw 'Earning not found in the list'
         }
 
         // Update the earnings list with the new data
         earningsList.value.splice(updIndex, 1, resData)
-        console.log('Updated earnings: ', resData)
 
         turnLoadingOff()
+
+        return resData // <--- Add this line
       } catch (error) {
-        // Handle unexpected errors
         console.error('An error occurred:', error)
         depositError.value = 'An unexpected error occurred'
         turnLoadingOff()
+        throw error // <--- Rethrow the error for the mutation handler
       }
     }
 
-    async function deleteEarning({ earningsId }: { earningsId: string }) {
+    async function deleteEarning({ earningsId }: { earningsId: string | undefined }) {
+      clearError()
+      turnLoadingOn()
       try {
         const res = await fetch(`${base_API_URL}/earnings/remove/${earningsId}`, {
           method: 'DELETE',
@@ -229,7 +219,7 @@ export const useDepositStore = defineStore(
           const resVal = await res.json()
           depositError.value = resVal.message
           turnLoadingOff()
-          return
+          throw resVal.message // <--- Rethrow the error for the mutation handler
         }
 
         const delIndex = earningsList.value.findIndex((ei) => ei._id === earningsId)
@@ -251,7 +241,16 @@ export const useDepositStore = defineStore(
         console.error('An error occurred:', error)
         depositError.value = 'An unexpected error occurred'
         turnLoadingOff()
+        throw error // <--- Rethrow the error for the mutation handler
       }
+    }
+
+    function resetData() {
+      earningsList.value.splice(0)
+      earningsList.value = []
+      // earningsList.value.slice(0, earningsList.value.length - 1)
+      depositIsLoading.value = false
+      depositError.value = null
     }
 
     return {
@@ -266,6 +265,7 @@ export const useDepositStore = defineStore(
       receiveDeposit,
       updateEarnings,
       deleteEarning,
+      resetData,
     }
   },
   { persist: true },

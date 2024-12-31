@@ -5,17 +5,25 @@ import { useUserStore } from './user'
 const base_API_URL = 'https://tracker-money-back.onrender.com/api/money'
 const user = useUserStore()
 
+export interface IExpenseListItem {
+  title: string
+  date: string | Date | null
+  price: number | string
+  type: string
+  category: string
+  [x: string]: unknown
+}
+
 export const useExpensesMoney = defineStore(
   'expenses',
   () => {
     // const allExpenses = ref(0)
-    const expensesList = ref([])
+    const expensesList = ref<IExpenseListItem[]>([])
     const expensesIsLoading = ref(false)
     const expensesError = ref<null | string>(null)
 
     const allExpenses = computed(() => {
-      return expensesList.value.reduce((acc, curr) => {
-        console.log(curr)
+      return expensesList.value.reduce((acc, curr: { price: string | number }) => {
         return (acc += Number(curr.price))
       }, 0)
     })
@@ -87,13 +95,6 @@ export const useExpensesMoney = defineStore(
 
         const resData = await res.json()
 
-        console.log(resData)
-
-        // allExpenses.value = resData.reducer((acc, curr) => {
-        //   console.log(curr)
-        //   return (acc += curr.price)
-        // }, 0)
-
         if (!res.ok) {
           expensesError.value = resData.message
           turnLoadingOff()
@@ -118,7 +119,7 @@ export const useExpensesMoney = defineStore(
       category,
     }: {
       title: string
-      date?: string | Date
+      date?: Date | Date[] | (Date | null)[] | null | undefined | string
       price?: number | string
       type: string
       category: string
@@ -147,7 +148,7 @@ export const useExpensesMoney = defineStore(
         if (!res.ok) {
           expensesError.value = resData.message
           turnLoadingOff()
-          return
+          throw resData.message
         }
 
         expensesList.value.push(resData)
@@ -169,13 +170,16 @@ export const useExpensesMoney = defineStore(
       type,
       category,
     }: {
-      expensesId: string
+      expensesId: string | undefined
       title: string
-      date?: string | Date
+      date?: Date | Date[] | (Date | null)[] | null | undefined | string
       price?: number | string
       type: string
       category: string
     }) {
+      clearError()
+      turnLoadingOn()
+
       try {
         const res = await fetch(`${base_API_URL}/expenses/${expensesId}`, {
           method: 'PUT',
@@ -197,7 +201,7 @@ export const useExpensesMoney = defineStore(
         if (!res.ok) {
           expensesError.value = resData.message
           turnLoadingOff()
-          return
+          throw resData.message
         }
 
         const updIndex = expensesList.value.findIndex((exp) => exp._id === expensesId)
@@ -205,19 +209,23 @@ export const useExpensesMoney = defineStore(
         if (updIndex === -1) {
           expensesError.value = 'Earning not found in the list'
           turnLoadingOff()
-          return
+          throw 'Earning not found in the list'
         }
 
         expensesList.value.splice(updIndex, 1, resData)
         turnLoadingOff()
+        return resData
       } catch (error) {
         console.error('An error occurred:', error)
         expensesError.value = 'An unexpected error occurred'
-        turnLoadingOff()
+        throw error
       }
     }
 
-    async function deleteExpenses({ expensesId }: { expensesId: string }) {
+    async function deleteExpenses({ expensesId }: { expensesId: string | undefined }) {
+      clearError()
+      turnLoadingOn()
+
       try {
         const res = await fetch(`${base_API_URL}/expenses/remove/${expensesId}`, {
           method: 'DELETE',
@@ -251,6 +259,12 @@ export const useExpensesMoney = defineStore(
       }
     }
 
+    function resetData() {
+      expensesList.value = []
+      expensesError.value = null
+      expensesIsLoading.value = false
+    }
+
     return {
       allExpenses,
       expensesList,
@@ -264,6 +278,7 @@ export const useExpensesMoney = defineStore(
       othersExpenses,
       foodExpenses,
       needsExpenses,
+      resetData,
     }
   },
   { persist: true },
