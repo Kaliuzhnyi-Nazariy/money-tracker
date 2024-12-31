@@ -25,13 +25,19 @@ const df = new DateFormatter('en-US', {
 })
 
 // Initialize value from props if provided
-const value = ref<DateValue | undefined>(
-  props.date ? parseDate(convertToISO(props.date)) : undefined,
-)
+// const value = ref<DateValue | undefined>(
+//   props.date ? parseDate(convertToISO(props.date)) : undefined,
+// )
+
+const value = ref<DateValue>()
 watch(
   () => value.value,
   () => {
-    emit('date', dateFormatted({ dateBefore: String(value.value) }))
+    if (value.value) {
+      emit('date', dateFormatted({ dateBefore: String(value.value) }))
+    } else {
+      emit('date', props.date)
+    }
   },
 )
 
@@ -42,11 +48,6 @@ watch(
     value.value = newDate ? parseDate(newDate) : undefined
   },
 )
-
-console.log('props.date: ', parseDate(convertToISO(String(props.date))))
-// console.log(value)
-
-// console.log('props.date: ', parseDate(props.date))
 </script>
 
 <template>
@@ -59,11 +60,51 @@ console.log('props.date: ', parseDate(convertToISO(String(props.date))))
         "
       >
         <CalendarIcon class="mr-2 h-4 w-4" />
-        {{ value ? df.format(value.toDate(getLocalTimeZone())) : 'Pick a date' }}
+        {{ value ? df.format(value.toDate(getLocalTimeZone())) : `${dateVal}` }}
       </Button>
     </PopoverTrigger>
     <PopoverContent class="w-auto p-0">
-      <Calendar v-model="dateVal" initial-focus />
+      <Calendar v-model="value" initial-focus />
     </PopoverContent>
   </Popover>
 </template>
+
+<!-- <script setup lang="ts">
+import { Button } from '@/components/ui/button'
+import { Calendar } from '@/components/ui/calendar'
+
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { cn } from '@/utils'
+import { DateFormatter, type DateValue, getLocalTimeZone } from '@internationalized/date'
+import { Calendar as CalendarIcon } from 'lucide-vue-next'
+import { ref } from 'vue'
+
+const df = new DateFormatter('en-US', {
+  dateStyle: 'long',
+})
+
+const value = ref<DateValue>()
+
+const props = defineProps<{
+  date?: string // Accept an optional date string as a prop
+}>()
+</script>
+
+<template>
+  <Popover>
+    <PopoverTrigger as-child>
+      <Button
+        variant="outline"
+        :class="
+          cn('w-[280px] justify-start text-left font-normal', !value && 'text-muted-foreground')
+        "
+      >
+        <CalendarIcon class="mr-2 h-4 w-4" />
+        {{ value ? df.format(value.toDate(getLocalTimeZone())) : `${props.date}` }}
+      </Button>
+    </PopoverTrigger>
+    <PopoverContent class="w-auto p-0">
+      <Calendar v-model="value" initial-focus />
+    </PopoverContent>
+  </Popover>
+</template> -->
