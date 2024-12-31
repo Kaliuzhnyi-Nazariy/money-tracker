@@ -3,55 +3,21 @@ import AllMoneyBlock from '@/components/AllMoneysBlock/AllMoneyBlock.vue'
 import ButtonsList from '@/components/Buttons/ButtonsList.vue'
 import ExpensesBlock from '@/components/ExpensesBlock/ExpensesBlock.vue'
 import ListMoney from '@/components/ListMoney/ListMoney.vue'
-import router from '@/router'
-import { useUserStore } from '@/stores/user'
-
-const userStore = useUserStore()
-
-if (!userStore.refreshToken) {
-  router.replace('/authorization')
-}
 </script>
 
 <template>
-  <!-- <button
-    @click="
-      () => {
-        userStore.register({
-          email: 'lxxx@mail.com',
-          password: 'AA12!@aa',
-          confirmPassword: 'AA12!@aa',
-        })
-      }
-    "
+  <div
+    class="min-[1440px]:grid min-[1440px]:grid-cols-2 min-[1440px]:grid-rows-[minmax(320px,480px)_1fr] min-[1440px]:gap-10"
   >
-    Click
-  </button>
-  <button
-    @click="
-      () => {
-        userStore.login({
-          enteredEmail: 'lxxx@mail.com',
-          password: 'AA12!@aa',
-        })
-      }
-    "
-  >
-    Click for login
-  </button>
-  <button
-    @click="
-      () => {
-        userStore.logout()
-      }
-    "
-  >
-    Click for logout
-  </button> -->
-
-  <AllMoneyBlock />
-  <ExpensesBlock />
-  <ListMoney type-of-list="expenses" />
-  <ListMoney type-of-list="earnings" />
-  <ButtonsList />
+    <AllMoneyBlock class="min-[1440px]:col-end-1 min-[1440px]:row-span-1" />
+    <ExpensesBlock
+      class="min-[1440px]:col-start-1 min-[1440px]:col-end-3 min-[1440px]:row-span-1"
+    />
+    <ListMoney
+      type-of-list="expenses"
+      class="min-[1440px]:col-end-1 min-[1440px]:col-end-14 min-[1440px]:row-span-2"
+    />
+    <ListMoney type-of-list="earnings" />
+    <ButtonsList />
+  </div>
 </template>
