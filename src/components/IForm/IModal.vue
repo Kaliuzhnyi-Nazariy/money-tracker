@@ -13,7 +13,7 @@ const props = defineProps({
     enum: ['dep', 'depUpd', 'with', 'withUpd'],
   },
   id: {
-    type: String,
+    type: String || undefined,
   },
   name: {
     type: String,

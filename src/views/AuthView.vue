@@ -3,7 +3,7 @@ import IForm from '@/components/IForm.vue'
 import LogForm from '@/components/LogForm/LogForm.vue'
 import RegForm from '@/components/RegForm/RegForm.vue'
 import { ref } from 'vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 
 const regOrLog = ref('log')
 const setReg = () => {
@@ -12,6 +12,12 @@ const setReg = () => {
 
 const setLog = () => {
   regOrLog.value = 'log'
+}
+
+const router = useRouter()
+
+const navigateToForgotPage = () => {
+  router.replace('/forgot')
 }
 </script>
 
@@ -31,19 +37,19 @@ const setLog = () => {
       <div class="mx-auto flex flex-col">
         <div class="h-48 flex flex-col my-auto w-full" v-if="regOrLog === 'log'">
           <RegForm
-            class="mt-2"
+            class=""
             @change-auth="
               () => {
                 setReg()
               }
             "
           />
-          <button @click="setReg">Don't have an account</button>
+          <button @click="setReg">Have an account</button>
         </div>
         <div class="h-48 flex flex-col my-auto w-full" v-else>
-          <LogForm class="w-full mt-6" :disabled-button="regOrLog === 'log'" />
-          <button @click="console.log" :disabled="regOrLog === 'log'">Forgot password?</button>
-          <button @click="setLog" :disabled="regOrLog === 'log'">Have an account</button>
+          <LogForm class="w-full" :disabled-button="regOrLog === 'log'" />
+          <button @click="navigateToForgotPage" class="mt-2">Forgot password?</button>
+          <button @click="setLog" :disabled="regOrLog === 'log'">Don't have an account</button>
         </div>
       </div>
     </div>
@@ -51,11 +57,11 @@ const setLog = () => {
   <IForm screen-size-type="pc" :class="regOrLog === 'log' ? 'bg-main' : 'bg-second'">
     <div class="flex transition-all duration-1000 fixed top-0 w-full h-full">
       <div
-        class="transition-all duration-[800ms] translate-y-[50%] w-[50%] mx-auto absolute top-0 left-0 flex flex-col"
+        class="transition-all duration-[800ms] translate-y-[30%] w-[50%] mx-auto absolute top-0 left-0 flex flex-col"
         :class="regOrLog === 'log' ? 'opacity-100' : 'opacity-0'"
       >
         <RegForm class="w-[50%] translate-x-[50%]" :disabled-button="regOrLog === 'reg'" />
-        <button @click="setReg" :disabled="regOrLog === 'reg'">Don't have an account</button>
+        <button @click="setReg" :disabled="regOrLog === 'reg'">Have an account</button>
       </div>
       <p
         class="text-wrap w-[50%] h-full bg-white text-black absolute transition-all duration-1000 p-4 text-center pt-[9%]"
@@ -75,7 +81,7 @@ const setLog = () => {
       >
         <LogForm class="w-[50%]" :disabled-button="regOrLog === 'log'" />
         <router-link to="forgot" :disabled="regOrLog === 'log'"> Forgot password? </router-link>
-        <button @click="setLog" :disabled="regOrLog === 'log'">Have an account</button>
+        <button @click="setLog" :disabled="regOrLog === 'log'">Don't have an account</button>
       </div>
     </div>
   </IForm>

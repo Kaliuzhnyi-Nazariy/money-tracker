@@ -14,7 +14,7 @@ import { RouterLink } from 'vue-router'
         streamline your process. Dive in and let Marker-Tracker make your workflow smarter, faster,
         and more intuitive. <b>Get started now and stay on top of what matters most!</b>
       </p>
-      <RouterLink to="/authorization" class="px-3 py-1.5 bg-orange-400 mt-2 rounded-2xl"
+      <RouterLink to="authorization" class="px-3 py-1.5 bg-orange-400 mt-2 rounded-2xl"
         >Start 🚀</RouterLink
       >
     </div>
