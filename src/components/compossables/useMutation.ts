@@ -1,25 +1,30 @@
 import { ref } from 'vue'
 
-type useMutationType = {
-  mutationFn: () => void
-  onSuccess: () => void
-  onError: () => void
+type useMutationType<TData, TArgs> = {
+  mutationFn: (...args: TArgs[]) => Promise<TData>
+  onSuccess?: (data: TData) => void
+  onError?: (error: unknown | string) => void
 }
 
-export const useMutation = ({ mutationFn, onSuccess, onError }: useMutationType) => {
-  const data = ref()
+export const useMutation = <TData = unknown, TArgs = unknown>({
+  mutationFn,
+  onSuccess,
+  onError,
+}: useMutationType<TData, TArgs>) => {
+  const data = ref<TData | null>(null)
   const isLoading = ref(false)
-  const errorMess = ref<null | unknown>(null)
+  const errorMess = ref<unknown | null>(null)
 
-  const mutation = async (...args: any) => {
+  const mutation = async (...args: TArgs[]) => {
     isLoading.value = true
     try {
       errorMess.value = null
-      data.value = await mutationFn(...args)
-      onSuccess?.(data)
+      const result = await mutationFn(...args)
+      data.value = result
+      onSuccess?.(result)
     } catch (error) {
       errorMess.value = error
-      onError?.(data)
+      onError?.(error)
     } finally {
       isLoading.value = false
     }

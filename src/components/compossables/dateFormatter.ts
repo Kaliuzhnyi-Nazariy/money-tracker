@@ -1,4 +1,4 @@
-export const dateFormatted = ({ dateBefore }: { dateBefore: Date | string | null }) => {
+export const dateFormatted = ({ dateBefore }: { dateBefore: Date | string | null | undefined }) => {
   const date = new Date(dateBefore || new Date())
 
   const day = String(date.getDate()).padStart(2, '0')
