@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 
 const Props = defineProps({
-  type: {
+  typeOfComp: {
     type: String,
     default: 'button',
   },
@@ -12,7 +12,7 @@ const Props = defineProps({
 })
 
 const componentIs = computed(() => {
-  return Props.type === 'button' ? Props.type : 'a'
+  return Props.typeOfComp === 'button' ? Props.typeOfComp : 'a'
 })
 </script>
 
@@ -20,7 +20,7 @@ const componentIs = computed(() => {
   <component
     :is="componentIs"
     :href="redirectTo"
-    class="flex justify-center w-full rounded-2xl border border-[#B4ABD0] bg-[#2C1B8B]"
+    class="flex justify-center items-center w-full rounded-2xl border border-[#B4ABD0] bg-[#2C1B8B] text-white md:h-10"
     ><slot>heeh</slot></component
   >
 </template>
