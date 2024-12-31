@@ -1,13 +1,18 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 const base_API_URL = 'https://tracker-money-back.onrender.com/api/users'
+
+const router = useRouter()
 
 export const useUserStore = defineStore(
   'user',
   () => {
+    const userId = ref('')
     const userEmail = ref('')
     const userToken = ref('')
+    const userRenewToken = ref('')
     const userLoading = ref(false)
     const userError = ref('')
 
@@ -34,13 +39,12 @@ export const useUserStore = defineStore(
       password: string
       confirmPassword: string
     }) {
-      // console.log(email, password, confirmPassword)
       turnToTrueUserLoading()
       cleanError()
       if (password !== confirmPassword) {
         turnToFalseUserLoading()
         userError.value = 'Passwords do not match!'
-        return
+        throw 'Passwords do not match!'
       }
 
       const res = await fetch(`${base_API_URL}/register`, {
@@ -58,11 +62,8 @@ export const useUserStore = defineStore(
       if (!res.ok) {
         const messageError = await res.json()
         userError.value = messageError.message
-        turnToFalseUserLoading()
-        return
+        throw `${messageError.message}`
       }
-
-      console.log(await res.json())
 
       turnToFalseUserLoading()
     }
@@ -83,17 +84,14 @@ export const useUserStore = defineStore(
         const messageError = await res.json()
         userError.value = messageError.message
         turnToFalseUserLoading()
-
-        return
+        throw messageError.message
       }
 
-      const { email, token } = await res.json()
+      const { _id, email, token } = await res.json()
+      userId.value = _id
       userToken.value = token
       userEmail.value = email
       turnToFalseUserLoading()
-
-      console.log({ email, token })
-      console.log({ userToken, userEmail })
     }
 
     async function logout() {
@@ -102,16 +100,75 @@ export const useUserStore = defineStore(
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${userToken.value}` },
       })
 
-      console.log(res)
       if (!res.ok) {
-        console.log('await res.json(): ', await res.json())
-        throw new Error('')
+        const msgErr = await res.json()
+        if (msgErr.message === 'Unauthorized') {
+          userToken.value = ''
+        }
+        router.replace('/authorization')
+        throw msgErr.message
       }
 
       userToken.value = ''
     }
 
-    return { userEmail, userToken, userLoading, userError, refreshToken, register, login, logout }
+    async function forgotPasswordReq(email: string) {
+      const res = await fetch(`${base_API_URL}/forgotPassword`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+
+      if (!res.ok) {
+        const resData = await res.json()
+        throw resData.message
+      }
+
+      const { resetTok } = await res.json()
+      userRenewToken.value = resetTok
+      return resetTok
+    }
+
+    async function renewPassword({
+      password,
+      confirmPassword,
+    }: {
+      password: string
+      confirmPassword: string
+    }) {
+      const res = await fetch(`${base_API_URL}/renewPassword/${userRenewToken.value}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ newPassword: password, confirmNewPassword: confirmPassword }),
+      })
+
+      if (!res.ok) {
+        console.log('await res.json(): ', await res.json())
+        throw new Error('')
+      }
+
+      userRenewToken.value = ''
+    }
+
+    const resetToken = () => {
+      userToken.value = ''
+    }
+
+    return {
+      userId,
+      userEmail,
+      userToken,
+      userRenewToken,
+      userLoading,
+      userError,
+      refreshToken,
+      register,
+      login,
+      forgotPasswordReq,
+      logout,
+      renewPassword,
+      resetToken,
+    }
   },
   { persist: true },
 )
