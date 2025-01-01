@@ -74,6 +74,9 @@ const {
   errorMess: withdrawErr,
 } = useMutation({
   mutationFn: (withdrawData: IWithdrawData) => {
+    if (withdrawData.date === 'NaN-NaN-NaN') {
+      withdrawData.date = dateFormatted({ dateBefore: new Date().toLocaleDateString('fr-CA') })
+    }
     return storeMoney.addExpenses({
       title: withdrawData.title,
       date: withdrawData.date,
@@ -180,6 +183,7 @@ const {
           :date="props.date"
           @date="
             (formattedData: string) => {
+              console.log('formattedData: ', formattedData)
               withdrawData.date = formattedData
             }
           "
