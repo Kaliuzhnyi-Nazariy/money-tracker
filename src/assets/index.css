@@ -73,6 +73,6 @@
     @apply border-border;
   }
   body {
-    @apply bg-main text-white;
+    @apply text-white;
   }
 }
