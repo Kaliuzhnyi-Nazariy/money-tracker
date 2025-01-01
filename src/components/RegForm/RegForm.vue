@@ -66,15 +66,17 @@ const { mutation: regUser, isLoading: reggingUser } = useMutation({
       // })
     "
     :disabled="useStore.userLoading"
-    class="flex flex-col gap-2 px-auto"
+    class="flex flex-col gap-2 px-auto items-center content-center"
   >
-    <InputComp placeholder="Enter your email" v-model="regData.email" />
-    <InputComp placeholder="Enter your password" type="password" v-model="regData.password" />
-    <InputComp
-      placeholder="Confirm your password"
-      type="password"
-      v-model="regData.confirmPassword"
-    />
+    <div class="flex flex-col justify-around gap-2 mx-auto">
+      <InputComp placeholder="Enter your email" v-model="regData.email" />
+      <InputComp placeholder="Enter your password" type="password" v-model="regData.password" />
+      <InputComp
+        placeholder="Confirm your password"
+        type="password"
+        v-model="regData.confirmPassword"
+      />
+    </div>
     <ButtonLogReg
       log-or-reg="reg"
       :is-loading="reggingUser"
@@ -84,6 +86,7 @@ const { mutation: regUser, isLoading: reggingUser } = useMutation({
           store.resSuc()
         }
       "
+      class="w-[50%]"
     />
     <!-- <button type="submit" :disabled="props.disabledButton" :is-loading="reggingUser">
       Sign up

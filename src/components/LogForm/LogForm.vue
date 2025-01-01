@@ -32,7 +32,7 @@ const { mutation: logUser, isLoading: loggingUser } = useMutation({
   },
   onSuccess: () => {
     store.setSuccess('You are logged in!')
-    router.replace('/dashboard')
+    router.replace('/money-tracker/dashboard')
   },
   onError: () => {
     store.setError(useStore.userError)
