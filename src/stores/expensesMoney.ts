@@ -98,7 +98,7 @@ export const useExpensesMoney = defineStore(
         if (!res.ok) {
           expensesError.value = resData.message
           turnLoadingOff()
-          return
+          throw resData.message
         }
 
         expensesList.value = resData
@@ -108,6 +108,7 @@ export const useExpensesMoney = defineStore(
         console.error('An error occurred:', error)
         expensesError.value = 'An unexpected error occurred'
         turnLoadingOff()
+        throw error
       }
     }
 
@@ -159,6 +160,7 @@ export const useExpensesMoney = defineStore(
         console.error('An error occurred:', error)
         expensesError.value = 'An unexpected error occurred'
         turnLoadingOff()
+        throw error
       }
     }
 
@@ -239,7 +241,7 @@ export const useExpensesMoney = defineStore(
         if (!res.ok) {
           expensesError.value = resData.message
           turnLoadingOff()
-          return
+          throw resData.message
         }
 
         const updIndex = expensesList.value.findIndex((exp) => exp._id === expensesId)
@@ -247,7 +249,7 @@ export const useExpensesMoney = defineStore(
         if (updIndex === -1) {
           expensesError.value = 'Earning not found in the list'
           turnLoadingOff()
-          return
+          throw 'Earning not found in the list'
         }
 
         expensesList.value.splice(updIndex, 1)
@@ -256,6 +258,7 @@ export const useExpensesMoney = defineStore(
         console.error('An error occurred:', error)
         expensesError.value = 'An unexpected error occurred'
         turnLoadingOff()
+        throw error
       }
     }
 
