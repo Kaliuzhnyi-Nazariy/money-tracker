@@ -3,7 +3,7 @@ import { RouterLink } from 'vue-router'
 </script>
 <template>
   <div
-    class="w-[80%] min-h-[40%] text-center text-base absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] p-5 bg-second text-white rounded-lg flex flex-col justify-center items-center"
+    class="w-[80%] min-h-[40%] text-center text-base absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] p-5 bg-secondary text-white rounded-lg flex flex-col justify-center items-center"
   >
     <div class="w-[60%]">
       <h2 class="text-lg font-bold mb-4">Hello dear user</h2>
