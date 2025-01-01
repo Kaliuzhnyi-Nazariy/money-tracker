@@ -22,7 +22,7 @@ const navigateToForgotPage = () => {
 </script>
 
 <template>
-  <IForm screen-size-type="mob" :class="regOrLog === 'log' ? 'bg-main' : 'bg-second'">
+  <IForm screen-size-type="mob" :class="regOrLog === 'log' ? 'bg-main' : 'bg-secondaryary'">
     <p class="text-wrap w-full bg-white text-black px-2 py-3 mb-4 text-center">
       <b>Welcome to Marker-Tracker!</b>
       <br />🎯 Please log in to access your account and continue tracking with ease. Your data is
@@ -54,7 +54,7 @@ const navigateToForgotPage = () => {
       </div>
     </div>
   </IForm>
-  <IForm screen-size-type="pc" :class="regOrLog === 'log' ? 'bg-main' : 'bg-second'">
+  <IForm screen-size-type="pc" :class="regOrLog === 'log' ? 'bg-main' : 'bg-secondary'">
     <div class="flex transition-all duration-1000 fixed top-0 w-full h-full">
       <div
         class="transition-all duration-[800ms] translate-y-[30%] w-[50%] mx-auto absolute top-0 left-0 flex flex-col"
