@@ -10,6 +10,7 @@ export const useProcentStore = defineStore(
   'percent',
   () => {
     const percent = computed(() => {
+      if (deposit.allAmount === 0) return 0 - Number(expenses.allExpenses)
       return 100 - (Number(expenses.allExpenses) * 100) / Number(deposit.allAmount)
     })
 
