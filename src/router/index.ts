@@ -3,24 +3,24 @@ import GreetingView from '@/views/GreetingView.vue'
 import { useUserStore } from '@/stores/user'
 
 const routes = [
-  { path: '/', name: 'greeting', component: GreetingView },
+  { path: '/money-tracker/', name: 'greeting', component: GreetingView },
   {
-    path: '/dashboard',
+    path: '/money-tracker/dashboard',
     name: 'dashboard',
     component: () => import('@/views/DashboardView.vue'),
   },
   {
-    path: '/authorization',
+    path: '/money-tracker/authorization',
     name: 'authorization',
     component: () => import('../views/AuthView.vue'),
   },
   {
-    path: '/forgot',
+    path: '/money-tracker/forgot',
     name: 'forgotPassword',
     component: () => import('../views/ForgotPassword.vue'),
   },
   {
-    path: '/renew',
+    path: '/money-tracker/renew',
     name: 'renewPassword',
     component: () => import('../views/ForgotPasswordForm.vue'),
   },
