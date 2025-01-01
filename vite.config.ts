@@ -17,6 +17,7 @@ export default defineConfig({
       resolvers: [PrimeVueResolver()],
     }),
   ],
+  base: '/money-tracker',
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

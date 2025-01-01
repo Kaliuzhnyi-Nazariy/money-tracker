@@ -38,7 +38,6 @@ declare module 'vue' {
     ListMoney: typeof import('./src/components/ListMoney/ListMoney.vue')['default']
     LogForm: typeof import('./src/components/LogForm/LogForm.vue')['default']
     MoneyCircle: typeof import('./src/components/AllMoneysBlock/MoneyCircle.vue')['default']
-    MoneyForm: typeof import('./src/components/AllMoneysBlock/MoneyForm.vue')['default']
     MoneyGoForm: typeof import('./src/components/AllMoneysBlock/MoneyGoForm.vue')['default']
     Popover: typeof import('./src/components/ui/popover/Popover.vue')['default']
     PopoverContent: typeof import('./src/components/ui/popover/PopoverContent.vue')['default']
