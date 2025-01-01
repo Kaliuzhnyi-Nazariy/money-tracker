@@ -17,12 +17,12 @@ const setLog = () => {
 const router = useRouter()
 
 const navigateToForgotPage = () => {
-  router.replace('/forgot')
+  router.replace('/money-tracker/forgot')
 }
 </script>
 
 <template>
-  <IForm screen-size-type="mob" :class="regOrLog === 'log' ? 'bg-main' : 'bg-secondaryary'">
+  <IForm screen-size-type="mob" :class="regOrLog === 'log' ? 'bg-main' : 'bg-secondary'">
     <p class="text-wrap w-full bg-white text-black px-2 py-3 mb-4 text-center">
       <b>Welcome to Marker-Tracker!</b>
       <br />🎯 Please log in to access your account and continue tracking with ease. Your data is
@@ -57,10 +57,10 @@ const navigateToForgotPage = () => {
   <IForm screen-size-type="pc" :class="regOrLog === 'log' ? 'bg-main' : 'bg-secondary'">
     <div class="flex transition-all duration-1000 fixed top-0 w-full h-full">
       <div
-        class="transition-all duration-[800ms] translate-y-[30%] w-[50%] mx-auto absolute top-0 left-0 flex flex-col"
+        class="transition-all duration-[800ms] translate-y-[50%] w-[50%] mx-auto absolute top-0 left-0 flex flex-col"
         :class="regOrLog === 'log' ? 'opacity-100' : 'opacity-0'"
       >
-        <RegForm class="w-[50%] translate-x-[50%]" :disabled-button="regOrLog === 'reg'" />
+        <RegForm class="w-full" :disabled-button="regOrLog === 'reg'" />
         <button @click="setReg" :disabled="regOrLog === 'reg'">Have an account</button>
       </div>
       <p
