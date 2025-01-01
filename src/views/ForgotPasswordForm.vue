@@ -81,26 +81,27 @@ const {
 </script>
 
 <template>
-  <div class="bg-second p-5">
+  <div class="bg-secondary p-5 w-[300px] md:w-[450px]">
     <form @submit.prevent="changePassword()">
-      <span class="relative">
+      <span class="flex w-full">
         <InputComp
           placeholder="Password"
           v-model:model-value="changePasswordData.password"
           :type="typeComp"
           label="Password"
+          class="w-full"
         />
         <ButtonItem
           type-of-comp="button"
           type="button"
           @click="toggleShowPssw"
-          class="absolute w-7 !h-7 flex justify-center items-center right-1 top-[50%]"
+          class="!w-[36px] !h-[36px] flex justify-center items-center ml-auto mt-auto"
           >{{ showPassword ? '🐵' : '🙈' }}</ButtonItem
         >
       </span>
-      <span class="relative">
+      <span class="flex w-full mt-3">
         <InputComp
-          class="mt-3"
+          class=""
           placeholder="Confirm password"
           v-model:model-value="changePasswordData.confirmPassword"
           :type="showedComp"
@@ -110,11 +111,11 @@ const {
           type-of-comp="button"
           type="button"
           @click="toggleShowPConf"
-          class="absolute w-7 !h-7 flex justify-center items-center right-1 top-[50%] translate-y-[25%]"
+          class="!w-[36px] !h-[36px] flex justify-center items-center ml-auto mt-auto"
           >{{ showConfirm ? '🐵' : '🙈' }}</ButtonItem
         >
       </span>
-      <div class="flex mt-3 gap-10">
+      <div class="flex flex-col mt-3 gap-2 lg:flex-row lg:gap-10">
         <ButtonItem
           typeOfComp="button"
           type="button"

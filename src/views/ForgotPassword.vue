@@ -27,7 +27,7 @@ const { mutation: reqForChangePassword, errorMess: reqErr } = useMutation({
 </script>
 
 <template>
-  <IForm screen-size-type="mob" class="bg-main border border-white rounded-2xl p-4 text-center">
+  <IForm screen-size-type="mob" class="border border-white rounded-2xl p-4 text-center">
     <form
       @submit.prevent="
         () => {
@@ -48,15 +48,15 @@ const { mutation: reqForChangePassword, errorMess: reqErr } = useMutation({
       <button type="submit" class="mt-4" v-if="!user.userRenewToken">Send email</button>
       <button
         type="button"
-        @click="() => router.replace('/renew')"
-        class="mt-4 bg-white text-second px-2 rounded-lg hover:scale-110 transition-all"
+        @click="() => router.replace('/money-tracker/renew')"
+        class="mt-4 bg-white text-secondary px-2 rounded-lg hover:scale-110 transition-all"
         v-else
       >
         Change password
       </button>
     </form>
   </IForm>
-  <IForm screen-size-type="pc" class="bg-main border border-white rounded-2xl p-4 text-center">
+  <IForm screen-size-type="pc" class="border border-white rounded-2xl p-4 text-center">
     <form
       @submit.prevent="
         () => {
@@ -77,8 +77,8 @@ const { mutation: reqForChangePassword, errorMess: reqErr } = useMutation({
       <button type="submit" class="mt-4" v-if="!user.userRenewToken">Send email</button>
       <button
         type="button"
-        @click="() => router.replace('/renew')"
-        class="mt-4 bg-white text-second px-2 rounded-lg hover:scale-110 transition-all"
+        @click="() => router.replace('/money-tracker/renew')"
+        class="mt-4 bg-white text-secondary px-2 rounded-lg hover:scale-110 transition-all"
         v-else
       >
         Change password
